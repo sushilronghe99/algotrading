@@ -1,0 +1,18 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<body>
+    <ul>
+        <% triggers.forEach((trigger)=> { %>
+            <li>
+                <h2>
+                    <%= article.title %>
+                </h2>
+                <p>
+                    <%= article.body %>
+                </p>
+            </li>
+            <hr />
+        <% }) %>
+    </ul>
+</body>
+<%- include('../partials/footer') %>
