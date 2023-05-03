@@ -5,7 +5,8 @@ var KiteConnect = require("kiteconnect").KiteConnect;
 var helper = require('./kitelib/helper');
 const LevelDB = require("./levelDB/db")
 const { parse } = require('querystring');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const { resolve } = require('path');
 
 const app = express()
 // Tell express to use the body-parser middleware and to not parse extended bodies
@@ -42,9 +43,22 @@ app.get('/', async (req, res) => {
     if (req.query.request_token) {
         try {
             initKS(req.query.request_token, res).then(() => {
-                console.log("after init ..", kc)
+                //console.log("after init ..", kc)
 
-                kc.getLTP(["NSE:RELIANCE", "NSE:NIFTYBANK"]).then((response) => {
+                kc.getInstruments("NFO").then(function(response) {
+                    //console.log(response);
+                    response.forEach((element)=>{
+                       // console.log(element)
+                        if(element.tradingsymbol && element.tradingsymbol.indexOf("BANKNIFTYMAY")!= -1){
+                            console.log(element);
+                        }
+                    })
+                }).catch(function(err) {
+                    console.log(err);
+                })
+
+
+                kc.getQuote(["NFO:BANKNIFTY235023600CE"]).then((response) => {
                     let data = response;
                     console.log(data)
                     res.render('pages/index', {
@@ -167,7 +181,47 @@ app.get('/getHoldings', (req, res) => {
     }
 
 })
+app.get('/getQuote',(req,res)=>{
+    res.setHeader('content-Type','application/json');
+    if (!kc) res.end(JSON.stringify({ "error": "kite not flying" }));
+    kc.getQuote(req.query.instrument).then((response) => {
+        let data = response;
+        res.end(JSON.stringify(data)); 
+        
+    }).catch(function (err) {
+        console.log("There is rror")
+        res.end(JSON.stringify({ "error": "bad request" })); 
+    })
+})
 
+//230502001537082
+app.get('/getOrderDetail',(req,res)=>{
+    res.setHeader('content-Type','application/json');
+    if (!kc) res.end(JSON.stringify({ "error": "kite not flying" }));
+
+    
+        kc.getOrders()
+            .then(function (response) {
+                //res.end(JSON.stringify(response, null, 3));
+                response.forEach((ord)=>{
+                    if(ord.order_id == req.query.orderID){
+                        console.log(ord.status);
+                    }
+                })
+            }).catch(function (err) {
+                res.end(JSON.stringify(err, null, 3));
+            });
+    
+
+    kc.getOrders(req.query.instrument).then((response) => {
+        let data = response;
+        res.end(JSON.stringify(data)); 
+        
+    }).catch(function (err) {
+        console.log("There is rror")
+        res.end(JSON.stringify({ "error": "bad request" })); 
+    })
+})
 
 app.get('/cancelGTT',(req,res)=>{
     //148000310
@@ -204,19 +258,44 @@ function checkGTT(tradingsymbol){
         })
     })
 }
+
+function checkOrderDetail(orderID){
+    return new Promise((resolve, reject) => {
+        if (!kc) reject("kite failed");
+        
+        kc.getOrders().then(function (response) {
+               console.log(response);
+               console.log(orderID);
+                response.forEach((ord)=>{
+                    if(ord.order_id == orderID){
+                        resolve(ord.status);
+                    }
+                })
+               // resolve();
+            }).catch(function (err) {
+                console.log(err);
+                reject(err);
+            });
+    })
+}
+
+
 function checkPosition(tradingsymbol){
     return new Promise((resolve, reject) => {
         if (!kc) reject("kite failed");
         
         kc.getPositions().then(function (resp) {
-            resp.forEach(element=>{
-                if(element.tradingsymbol === tradingsymbol){
+            console.log(resp);
+            resp.net.forEach(element=>{
+                
+                if(element.tradingsymbol === tradingsymbol && element.quanity > 0){
                   resolve("tradeExist")
                 }
             })
             resolve("noTradeFound")
            
         }).catch(function (err) {
+            console.log(err);
             reject("error")
         })
     })
@@ -227,12 +306,11 @@ function getTradePosition(tradingsymbol){
     return new Promise((resolve, reject) => {
         if (!kc) reject("kite failed");
 
-    kc.getPositions()
-    .then(function (response) {
+    kc.getPositions().then(function (response) {
         //res.end(JSON.stringify(response, null, 3));
         response.net.forEach(element => {
             console.log(element)
-            if(element.tradingsymbol == req.query.tradingsymbol){
+            if(element.tradingsymbol == tradingsymbol){
                resolve(element);
             }
         })
@@ -248,49 +326,110 @@ function placeGTT(tradingsymbol) {
 
     return new Promise((resolve, reject) => {
         getTradePosition(tradingsymbol).then(function (resp) {
+            console.log("Getting trade position ..")
             console.log(resp);
             if (resp) {
-                var currentQty = resp.buy_quantity - resp.sell_quantity;
-                var transaction_type = currentQty > 0 ? "SELL" : "BUY";
+                //var currentQty = resp.buy_quantity - resp.sell_quantity;
+                //var transaction_type = currentQty > 0 ? "SELL" : "BUY";
 
 
                 //Lets now set the GTT for the trade.. also make sure there are not existing GTT for this trade. 
-                checkGTT(req.query.tradingsymbol).then(function (response) {
+                checkGTT(tradingsymbol).then(function (response) {
                     console.log(response);
-                    if (resp === "noOrder") {
-                        createGTT(tradingsymbol, EXCHANGE, resp.last_price, QTY, transaction_type).then(function (res2) {
-                            resolve()
+                    if (response === "noOrder") {
+                        createGTT(response.tradingsymbol, response.exchange, response.last_price, response.quanity, "SELL").then(function (res2) {
+                            resolve(res2)
+                        }).catch(function (err) {
+                            reject(err)
                         })
                     }
                     else{
                         resolve("GTT Exist")
                     }
 
+                }).catch(function (err) {
+                    reject(err)
                 })
 
             }
+            else{
+                resolve("Trade position not found")
+            }
+        }).catch(function (err) {
+            reject(err)
         })
     })
 }
 
-function placeOrder(tradingsymbol, transaction_type){
+function placeOrder(tradingsymbol, exchange,product,quanity){
 
     return new Promise((resolve, reject) => {
         if (!kc) reject("kite failed");
 
     kc.placeOrder("regular", {
-        "exchange": EXCHANGE,
+        "exchange": exchange,
         "tradingsymbol": tradingsymbol,
-        "transaction_type": transaction_type,
-        "quantity": QTY,
-        "product": "MIS", //MIS
+        "transaction_type": "BUY",
+        "quantity": quanity,
+        "product": product, //MIS
         "order_type": "MARKET"
     }).then(function (resp) {
-        resolve()
+        resolve(resp)
     }).catch(function (err) {
         reject(err)
     })
 })
+}
+
+function placeAlgoOrder(tradingsymbol,exchange,product,quanity){
+    return new Promise((resolve,reject)=>{
+        if(!kc) reject("kite not flying");
+
+        checkPosition(tradingsymbol).then(function(resp){
+            if(resp == "noTradeFound"){ // No Position Found so place order 
+              console.log("No trade found. ")
+                placeOrder(tradingsymbol,exchange,product,quanity).then(function(resp){ //Place order
+                   console.log(resp);
+
+                    setTimeout(() => {
+                        console.log("Checking Order Detail .. ")
+                        checkOrderDetail(resp.order_id).then(function(res){
+                            console.log(res);
+                            if(res == "COMPLETE"){
+                            console.log("placing GTT")
+                                 placeGTT(tradingsymbol).then(function(resp2){ //place GTT after 20 SEC
+                                     console.log(resp2);
+                                     resolve("Order & GTT Placed")
+                                 }).catch(function(err){
+                                    reject(err);
+                                 })
+                            
+                            }
+                            else{
+                                reject(res)
+                            }
+                         }).catch(function(err){
+                            console.log(err);
+                            reject(err);
+                        })
+                    }, 5000);
+                    
+                    
+                }).catch(function(err){
+                    console.log(err);
+                    reject(err);
+                })
+             
+
+            }
+            else{
+                //First Clear the GTT 
+             //Then close this position. 
+             //Tell the program to recreate order after 10-20 sec. 
+             reject("Trade Exist");
+            }
+        })
+    })
 }
 
 function createGTT(tradingSym, exchange, last_price, qty){
@@ -342,6 +481,8 @@ app.get('/getGTTs',(req,res)=>{
 
 app.post('/receiveAlerts',(req,res)=>{
     //148000310
+    //NFO:BANKNIFTY23MAY43600CE
+    //NFO:BANKNIFTY23MAY43300PE
     //{{exchange}}:{{ticker}}:{{timenow}} , priceC = {{close}}, priceO = {{open}}, priceT = {{time}}, volume = {{volume}}
     //Where to find the title ? lets save this message and dispay it non a page. 
     //var body = req.body; 
@@ -357,6 +498,10 @@ app.post('/receiveAlerts',(req,res)=>{
                 //administratorsKeys.push(keyName);
                 console.log(error)
                 res.end(JSON.stringify({"message":"success"}, null, 3));
+                console.log("TradingSymbol", body.tradingsymbol)
+                console.log("exchange", body.exchange)
+                console.log("product", body.product)
+                console.log("QTY", body.quanity)
             }
         });
 
@@ -373,33 +518,26 @@ app.post('/receiveAlerts',(req,res)=>{
 
 })
 
+//http://localhost:8080/algoOrder/?tradingsymbol=BANKNIFTY23MAY43500CE&transaction_type=BUY&quantity=25&product=MIS&exchange=NFO
+
+//http://localhost:8080/algoOrder/?tradingsymbol=BANKNIFTY23MAY43400PE&transaction_type=BUY&quantity=25&product=MIS&exchange=NFO
 app.get('/algoOrder', (req, res) => {
 
     
     if (!kc) return res.send(JSON.stringify({ "error": "kite not flying" }));
-    
+     
+    console.log(req.query)
         if (req.query.tradingsymbol) {
-            checkPosition(req.query.tradingsymbol).then(function(resp){
-                if(resp == "noTradeFound"){ // No Position Found
-
-                    placeOrder(req.query.tradingsymbol,"BUY").then(function(resp){ //Place order
-                       
-                        console.log(resp);
-                        setTimeout(() => {
-                            placeGTT(req.query.tradingsymbol).then(function(resp2){ //place GTT after 20 SEC
-                                console.log(resp2);
-                            })
-                        }, 20000); //wait 10 second and then place GTT 
-                    })
-                 
-
-                }
-                else{
-                    //First Clear the GTT 
-                 //Then close this position. 
-                 //Tell the program to recreate order after 10-20 sec. 
-                }
+            try{
+            placeAlgoOrder(req.query.tradingsymbol,req.query.exchange,req.query.product, req.query.quantity).then(function(res){
+                res.end(JSON.stringify({"success": res}, null, 3));
+            }).catch(function(err){
+                res.end(JSON.stringify({"error": err}, null, 3));
             })
+        }
+        catch(err){
+            console.log(err);
+        }
         }
     
 })

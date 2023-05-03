@@ -1,0 +1,29 @@
+
+//Alert for BANK NIFTY SELL?BUY
+
+{
+    "clientId": "bot1",
+    "transaction_type": "BUY",
+    "order_type": "MARKET",
+    "product": "MIS",
+    "price": "{{close}}",
+    "exchange": "{{exchange}}",
+    "tradingSymbol":"BANKNIFTY23MAY43500CE",
+    "time": "{{timenow}}",
+    "chart_time": "{{interval}}",
+    "quantity": "25"
+  }
+
+
+  {
+    "clientId": "bot1",
+    "transaction_type": "BUY",
+    "order_type": "MARKET",
+    "product": "MIS",
+    "price": "{{close}}",
+    "exchange": "{{exchange}}",
+    "tradingSymbol":"BANKNIFTY23MAY43400PE",
+    "time": "{{timenow}}",
+    "chart_time": "{{interval}}",
+    "quantity": "25"
+  }

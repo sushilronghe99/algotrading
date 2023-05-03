@@ -1,0 +1,36 @@
+
+
+ssh git Token : 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
+
+sudo apt update
+
+
+sudo apt install nodejs
+node -v 
+sudo apt install npm
+
+
+cd /etc/nginx/sites-enabled/
+sudo nano fastapi_nginx 
+# add below content in this file 
+server {
+    listen 80;
+    server_name 54.145.59.183;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+    }
+}
+
+sudo service nginx restart
+
+git clone https://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@github.com/sushilronghe99/algotrading.git
+
+npm install 
+npm install pm2 -g
+
+pm2 start app.js 
+pm2 kill 
+
+
+
+
