@@ -7,11 +7,11 @@
     "order_type": "MARKET",
     "product": "MIS",
     "price": "{{close}}",
-    "exchange": "{{exchange}}",
-    "tradingSymbol":"BANKNIFTY23MAY43500CE",
+    "exchange": "NFO",
+    "tradingsymbol":"BANKNIFTY23MAY43500CE",
     "time": "{{timenow}}",
     "chart_time": "{{interval}}",
-    "quantity": "25"
+    "quantity": 25
   }
 
 
@@ -21,9 +21,9 @@
     "order_type": "MARKET",
     "product": "MIS",
     "price": "{{close}}",
-    "exchange": "{{exchange}}",
-    "tradingSymbol":"BANKNIFTY23MAY43400PE",
+    "exchange": "NFO",
+    "tradingsymbol":"BANKNIFTY23MAY43400PE",
     "time": "{{timenow}}",
     "chart_time": "{{interval}}",
-    "quantity": "25"
+    "quantity": 25
   }

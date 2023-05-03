@@ -33,7 +33,7 @@ const user = {
 const TradingSymbol = "ITC";
 const EXCHANGE = "NSE"
 const QTY = 25;
-const MARGIN = 20;
+const MARGIN = 12;
 
 var kc;
 
@@ -246,8 +246,8 @@ function checkGTT(tradingsymbol){
         
         kc.getGTTs().then(function (resp) {
             resp.forEach(element=>{
-                console.log(tradingsymbol)
-                if(element.condition.tradingsymbol === tradingsymbol){
+                console.log(element)
+                if(element.condition.tradingsymbol === tradingsymbol && element.status != "triggered"){
                   resolve("orderExist")
                 }
             })
@@ -337,7 +337,7 @@ function placeGTT(tradingsymbol) {
                 checkGTT(tradingsymbol).then(function (response) {
                     console.log(response);
                     if (response === "noOrder") {
-                        createGTT(response.tradingsymbol, response.exchange, response.last_price, response.quanity, "SELL").then(function (res2) {
+                        createGTT(resp.tradingsymbol, resp.exchange, resp.last_price, resp.quantity, "SELL").then(function (res2) {
                             resolve(res2)
                         }).catch(function (err) {
                             reject(err)
@@ -437,6 +437,11 @@ function createGTT(tradingSym, exchange, last_price, qty){
     return new Promise((resolve, reject) => {
         if (!kc) reject("kite failed");
 
+        console.log("tradingSym" + tradingSym);
+        console.log("exchange" + exchange);
+        console.log("last_price" + last_price);
+        console.log("QTY" + qty);
+
     kc.placeGTT({
         trigger_type: kc.GTT_TYPE_OCO,
         tradingsymbol: tradingSym,
@@ -446,13 +451,13 @@ function createGTT(tradingSym, exchange, last_price, qty){
         orders: [{
             transaction_type: kc.TRANSACTION_TYPE_SELL,
             quantity: qty,
-            product: kc.PRODUCT_CNC,
+            product: kc.PRODUCT_MIS,
             order_type: kc.ORDER_TYPE_LIMIT,
             price: last_price-MARGIN
         }, {
             transaction_type: kc.TRANSACTION_TYPE_SELL,
             quantity: qty,
-            product: kc.PRODUCT_CNC,
+            product: kc.PRODUCT_MIS,
             order_type: kc.ORDER_TYPE_LIMIT,
             price: last_price+MARGIN
         }]
@@ -491,17 +496,48 @@ app.post('/receiveAlerts',(req,res)=>{
     var key = "Notification_"+date;
     const body = req.body
 
+    var trade, exchange, product, quanity;
+
     console.log(body)
     //res.end(JSON.stringify(body, null, 3));
         dbHelper.put(key, JSON.stringify(body), (error) => {
             if (error !== null) {
                 //administratorsKeys.push(keyName);
-                console.log(error)
-                res.end(JSON.stringify({"message":"success"}, null, 3));
-                console.log("TradingSymbol", body.tradingsymbol)
-                console.log("exchange", body.exchange)
-                console.log("product", body.product)
-                console.log("QTY", body.quanity)
+                if(Array.isArray(body)){
+                   //get most recent one - that is last one 
+                  
+                   let lastElement = body[body.length - 1];
+                    res.end(JSON.stringify({"message":"success"}, null, 3));
+                    trade = lastElement.tradingsymbol;
+                    exchange = lastElement.exchange;
+                    product = lastElement.product;
+                    quanity = lastElement.quanity;
+
+                    console.log("TradingSymbol", trade)
+                    console.log("exchange", exchange)
+                    console.log("product", product)
+                    console.log("QTY", quanity)
+                }
+                else{
+                    console.log(error)
+                    res.end(JSON.stringify({"message":"success"}, null, 3));
+                    trade = body.tradingsymbol;
+                    exchange = body.exchange;
+                    product = body.product;
+                    quanity = body.quanity;
+
+                    console.log("TradingSymbol", trade)
+                    console.log("exchange", exchange)
+                    console.log("product", product)
+                    console.log("QTY", quanity)
+                }
+                
+                /*placeAlgoOrder(body.tradingsymbol,body.exchange,body.product, body.quantity).then(function(res){
+                    res.end(JSON.stringify({"success": res}, null, 3));
+                }).catch(function(err){
+                    res.end(JSON.stringify({"error": err}, null, 3));
+                })*/
+
             }
         });
 
