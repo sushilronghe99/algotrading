@@ -496,7 +496,7 @@ app.post('/receiveAlerts',(req,res)=>{
     var key = "Notification_"+date;
     const body = req.body
 
-    var trade, exchange, product, quanity;
+    var trade, exchange, product, quantity;
 
     console.log(body)
     //res.end(JSON.stringify(body, null, 3));
@@ -511,12 +511,12 @@ app.post('/receiveAlerts',(req,res)=>{
                     trade = lastElement.tradingsymbol;
                     exchange = lastElement.exchange;
                     product = lastElement.product;
-                    quanity = lastElement.quanity;
+                    quantity = lastElement.quantity;
 
                     console.log("TradingSymbol", trade)
                     console.log("exchange", exchange)
                     console.log("product", product)
-                    console.log("QTY", quanity)
+                    console.log("QTY", quantity)
                 }
                 else{
                     console.log(error)
@@ -524,19 +524,22 @@ app.post('/receiveAlerts',(req,res)=>{
                     trade = body.tradingsymbol;
                     exchange = body.exchange;
                     product = body.product;
-                    quanity = body.quanity;
+                    quantity = body.quantity;
 
                     console.log("TradingSymbol", trade)
                     console.log("exchange", exchange)
                     console.log("product", product)
-                    console.log("QTY", quanity)
+                    console.log("QTY", quantity)
                 }
                 
-                /*placeAlgoOrder(body.tradingsymbol,body.exchange,body.product, body.quantity).then(function(res){
+            if(quanity > 0 && trade){
+                console.log("placing order Now ..")
+                placeAlgoOrder(trade,exchange,product, quantity).then(function(res){
                     res.end(JSON.stringify({"success": res}, null, 3));
                 }).catch(function(err){
                     res.end(JSON.stringify({"error": err}, null, 3));
-                })*/
+                })
+            }
 
             }
         });
