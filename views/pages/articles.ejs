@@ -12,20 +12,23 @@
                         <div class="col">
                             <div class="card border-0 bg-light rounded shadow">
                                 <div class="card-body p-4">
-                                    <% if(article.transaction_type == "BUY"){ %>
-                                      <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0"><%= article.transaction_type %></span>
+                                    <% if(article.tradingsymbol && article.tradingsymbol.slice(-2) == "CE"){ %>
+                                      <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">CALL</span>
                                       <% } else{ %>  
-                                        <span class="badge rounded-pill bg-danger float-md-end mb-3 mb-sm-0"><%= article.transaction_type %></span>
+                                        <span class="badge rounded-pill bg-warning float-md-end mb-3 mb-sm-0">PUT</span>
                                         <% } %>
                                     <h5> <%= article.tradingSymbol %></h5>
                                     <div class="mt-3">
-                                        <span class="text-muted d-block"><i class="fa fa-home" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">Price <%= article.price %></a></span>
-                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> <%= article.product %></span>
-                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> <%= article.time %></span>
+                                        <span class="text-muted d-block"><i class="fa fa-home" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">LTP (Price) <%= article.price %></a></span>
+                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Order Type <%= article.product %></span>
+                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> SL <%= article.price - article.sl %></span>
+                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Order Limit <%= article.price + article.limit %></span>
+                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Buy QTY <%= article.quantity %></span>
+                                        <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Trigger Date: <%= new Date(article.time).toLocaleDateString("de-DE"); %></span>
                                     </div>
                                     
                                     <div class="mt-3">
-                                        <a href="#" class="btn btn-primary"><%= article.chart_time %></a>
+                                        <a href="#" class="btn btn-primary"><%= new Date(article.time).getHours()%>:<%=  new Date(article.time).getMinutes()  %></a>
                                     </div>
                                 </div>
                             </div>

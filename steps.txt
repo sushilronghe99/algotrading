@@ -21,6 +21,12 @@ server {
     }
 }
 
+
+Setting UP Route 53 : https://blog.cloudboost.io/setting-up-an-https-sever-with-node-amazon-ec2-nginx-and-lets-encrypt-46f869159469
+
+Https Setup  : follow digital OCEAN Tutorial 
+https://www.digitalocean.com/community/tutorials/how-to-create-a-self-signed-ssl-certificate-for-nginx-in-ubuntu-20-04-1
+
 sudo service nginx restart
 
 git clone https://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@github.com/sushilronghe99/algotrading.git
@@ -29,8 +35,15 @@ npm install
 npm install pm2 -g
 
 pm2 start app.js 
+pm2 log app --lines 1000
+
 pm2 kill 
 
 
 
 
+git init
+git add -A
+git commit -m 'Added my project'
+git remote add origin git@github.com:sammy/my-new-project.git
+git push -u -f origin main

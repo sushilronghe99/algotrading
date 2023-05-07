@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<body>
+    <link href="index.css" rel="stylesheet" type="text/css">
+    <div class="container">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Error</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% errors.forEach((article)=> { %>
+              <tr>
+                <th scope="row"> <%= article.key %></th>
+                <td style="word-wrap: break-word;min-width: 160px;max-width: 160px;"><%= JSON.stringify(article) %></td>
+                
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        <% errors.forEach((article)=> { %>
+        
+        <% }) %>
+    </div>
+
+    
+</body>
+<%- include('../partials/footer') %>

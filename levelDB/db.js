@@ -95,6 +95,29 @@ class LevelDb {
        //})
    }
 
+   getError(callback) {
+    let self = this;
+    let dataArray = [];
+    //return new Promise(function(resolve, reject){
+     this.db.createReadStream()
+       .on('data', function (data) {
+        if(data.key.indexOf("Error_") != -1){
+            var kik = JSON.parse(data.value);
+            kik['key'] = data.key;
+            dataArray.push(kik);
+            //dataArray.push({"${kik}": JSON.parse(data.value)});
+          }
+        
+        
+        })
+       .on('error', function (err) {
+        callback(error);
+        })
+       .on('close', function () {
+        callback(dataArray);
+        })
+   //})
+}
 
 
 }
