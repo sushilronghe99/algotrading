@@ -67,7 +67,7 @@ app.get('/', async (req, res) => {
 
 
         } catch (error) {
-            next(error)
+           console.log(error);
         }
     }
     else if(kc){
@@ -239,7 +239,7 @@ function checkGTT(tradingsymbol){
         
         kc.getGTTs().then(function (resp) {
             resp.forEach(element=>{
-                
+
                 console.log(element)
                 if(element.condition.tradingsymbol === tradingsymbol && element.status != "triggered"){
                   resolve("orderExist")
