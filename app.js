@@ -332,7 +332,7 @@ function placeGTT(tradingsymbol,product,sl,limit) {
                 checkGTT(tradingsymbol).then(function (response) {
                     console.log(response);
                     if (response === "noOrder") {
-                        createGTT(resp.tradingsymbol, product, resp.exchange, resp.last_price, resp.quantity, "SELL", sl,limit).then(function (res2) {
+                        createGTT(resp.tradingsymbol, resp.exchange,product, resp.last_price, resp.quantity, sl,limit).then(function (res2) {
                             resolve(res2)
                         }).catch(function (err) {
                             reject(err)
@@ -446,15 +446,17 @@ function placeAlgoOrder(tradingsymbol,exchange,product,quantity,sl,limit){
     })
 }
 
-function createGTT(tradingSym, exchange, product, sl, limit, last_price, qty,sl,limit){
+function createGTT(tradingSym, exchange, product, last_price, qty,sl,limit){
 
     return new Promise((resolve, reject) => {
         if (!kc) reject("kite failed");
 
         console.log("tradingSym" + tradingSym);
         console.log("exchange" + exchange);
+        console.log("product" + product);
         console.log("last_price" + last_price);
         console.log("QTY" + qty);
+        console.log("Limit & SL ", limit +" "+sl);
 
     kc.placeGTT({
         trigger_type: kc.GTT_TYPE_OCO,

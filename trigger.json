@@ -1,6 +1,7 @@
 
 //Alert for BANK NIFTY SELL?BUY
 
+// https://udev.co.in/
 {
     "clientId": "CE_BUY",
     "transaction_type": "BUY",
@@ -11,7 +12,9 @@
     "tradingsymbol":"BANKNIFTY23MAY43500CE",
     "time": "{{timenow}}",
     "chart_time": "{{interval}}",
-    "quantity": 25
+    "quantity": 25,
+    "sl": 20,
+    "limit": 80
   }
 
 
@@ -23,8 +26,10 @@
     "product": "MIS",
     "price": "{{close}}",
     "exchange": "NFO",
-    "tradingsymbol":"BANKNIFTY23MAY38400PE",
+    "tradingsymbol":"BANKNIFTY23MAY43000PE",
     "time": "{{timenow}}",
     "chart_time": "{{interval}}",
-    "quantity": 25
+    "quantity": 25,
+    "sl": 20,
+    "limit": 50
   }
