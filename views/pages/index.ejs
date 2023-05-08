@@ -24,17 +24,17 @@
                                           <% } else{ %>  
                                             <span class="badge rounded-pill bg-warning float-md-end mb-3 mb-sm-0">PUT</span>
                                             <% } %>
-                                        <h5> <%= article.tradingSymbol %></h5>
+                                        <h5> <%= article.tradingsymbol %></h5>
                                         <div class="mt-3">
-                                            <span class="text-muted d-block"><i class="fa fa-home" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">LTP (Price) <%= article.price %></a></span>
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Order Type <%= article.product %></span>
+                                            <span class="text-muted d-block"><i class="fa fa-home" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">LTP (Price):  <%= article.average_price %></a></span>
+                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Order Type:  <%= article.product %></span>
                                            
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Buy QTY <%= article.quantity %></span>
+                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Buy QTY:  <%= article.quantity %></span>
                                             <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Trigger Date: <%= new Date(article.exchange_timestamp).toLocaleDateString("de-DE"); %></span>
                                         </div>
                                         
                                         <div class="mt-3">
-                                            <a href="#" class="btn btn-primary"><%= new Date(article.exchange_timestamp).getHours()%>:<%=  new Date(article.time).getMinutes()  %></a>
+                                            <a href="#" class="btn btn-primary"><%= new Date(article.exchange_timestamp).getHours()%>:<%=  new Date(article.exchange_timestamp).getMinutes()  %></a>
                                         </div>
                                     </div>
                                 </div>

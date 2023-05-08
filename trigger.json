@@ -33,3 +33,34 @@
     "sl": 20,
     "limit": 50
   }
+
+  ///NIFTY 
+  {
+    "clientId": "CE_BUY",
+    "transaction_type": "BUY",
+    "order_type": "MARKET",
+    "product": "MIS",
+    "price": "{{close}}",
+    "exchange": "NFO",
+    "tradingsymbol":"NIFTYMAY18800CE",
+    "time": "{{timenow}}",
+    "chart_time": "{{interval}}",
+    "quantity": 25,
+    "sl": 20,
+    "limit": 40
+  }
+
+  {
+    "clientId": "UTBOT_SELL",
+    "transaction_type": "BUY",
+    "order_type": "MARKET",
+    "product": "MIS",
+    "price": "{{close}}",
+    "exchange": "NFO",
+    "tradingsymbol":"NIFTY23MAY17000PE",
+    "time": "{{timenow}}",
+    "chart_time": "{{interval}}",
+    "quantity": 25,
+    "sl": 20,
+    "limit": 40
+  }
