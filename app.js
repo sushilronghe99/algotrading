@@ -120,7 +120,7 @@ app.get('/articles', (req, res) => {
 
 app.get('/errors', (req, res) => {
     dbHelper.getError((values)=>{
-        console.log(values)
+        //console.log(values)
         res.render('pages/errors', {
             errors: values
         })
@@ -138,7 +138,7 @@ app.get('/triggers', (req, res) => {
     });*/
 
     dbHelper.getNotifications((values)=>{
-        console.log(values)
+        //console.log(values)
         res.render('pages/articles', {
             articles: values
         })
@@ -239,9 +239,12 @@ function checkGTT(tradingsymbol){
         
         kc.getGTTs().then(function (resp) {
             resp.forEach(element=>{
-
-                console.log(element)
+                console.log("Checking GTT aginst ..")
+                //console.log(element)
                 if(element.condition.tradingsymbol === tradingsymbol && element.status != "triggered"){
+                console.log("order exist");
+                console.log(element)
+
                   resolve("orderExist")
                 }
             })
@@ -258,8 +261,8 @@ function checkOrderDetail(orderID){
         if (!kc) reject("kite failed");
         
         kc.getOrders().then(function (response) {
-               console.log(response);
-               console.log(orderID);
+               //console.log(response);
+               //console.log(orderID);
                 response.forEach((ord)=>{
                     if(ord.order_id == orderID){
                         resolve(ord.status);
@@ -335,6 +338,9 @@ function placeGTT(tradingsymbol,product,sl,limit) {
                         createGTT(resp.tradingsymbol, resp.exchange,product, resp.last_price, resp.quantity, sl,limit).then(function (res2) {
                             resolve(res2)
                         }).catch(function (err) {
+                            console.log("error in creating GTT");
+                            console.log(err);
+                            logError(tradingsymbol, err)
                             reject(err)
                         })
                     }
@@ -376,6 +382,22 @@ function placeOrder(tradingsymbol, exchange,product,quantity){
 })
 }
 
+function logError(trade,error){
+    var date = helper.getDate();
+                    var key = "Error_"+date;
+                    try{
+                    const body = error;
+                   
+                    body["tradingsymbol"] = trade;
+                        dbHelper.put(key, JSON.stringify(body), (error) => {
+                            if (error !== null) {
+                            }
+                        })
+                    }
+                    catch(errr){
+                        console.log(errr)
+                    }
+}
 function placeAlgoOrder(tradingsymbol,exchange,product,quantity,sl,limit){
     return new Promise((resolve,reject)=>{
         if(!kc) reject("kite not flying");
@@ -412,22 +434,8 @@ function placeAlgoOrder(tradingsymbol,exchange,product,quantity,sl,limit){
                     
                 }).catch(function(err){
                     console.log(err);
-                    var date = helper.getDate();
-                    var key = "Error_"+date;
-                    try{
-                    const body = err;
+                    logError(tradingsymbol, err)
                    
-                    body["tradingsymbol"] = tradingsymbol;
-                
-    
-                        dbHelper.put(key, JSON.stringify(body), (error) => {
-                            if (error !== null) {
-                            }
-                        })
-                    }
-                    catch(errr){
-                        console.log(errr)
-                    }
 
                     reject(err);
                 })
