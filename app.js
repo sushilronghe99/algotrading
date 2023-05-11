@@ -7,6 +7,7 @@ const LevelDB = require("./levelDB/db")
 const { parse } = require('querystring');
 const bodyParser = require('body-parser');
 const { resolve } = require('path');
+const { getQuote } = require('./kitelib/helper');
 
 const app = express()
 // Tell express to use the body-parser middleware and to not parse extended bodies
@@ -520,7 +521,7 @@ app.post('/receiveAlerts',(req,res)=>{
     var key = "Notification_"+date;
     const body = req.body
 
-    var trade, exchange, product, quantity, sl, limit;
+    var trade, exchange, product, quantity, sl, limit, transaction_type, NFOLTP;
 
     console.log(body)
     //res.end(JSON.stringify(body, null, 3));
@@ -538,6 +539,8 @@ app.post('/receiveAlerts',(req,res)=>{
                     quantity = lastElement.quantity;
                     sl = lastElement.sl;
                     limit = lastElement.limit;
+                    transaction_type = lastElement.transaction_type;
+                    NFOLTP = lastElement.price;
 
 
                     console.log("TradingSymbol", trade)
@@ -554,8 +557,10 @@ app.post('/receiveAlerts',(req,res)=>{
                     exchange = body.exchange;
                     product = body.product;
                     quantity = body.quantity;
+                    transaction_type = body.transaction_type;
                     sl = body.sl;
                     limit = body.limit;
+                    NFOLTP = body.price;
 
                     console.log("TradingSymbol", trade)
                     console.log("exchange", exchange)
@@ -567,11 +572,66 @@ app.post('/receiveAlerts',(req,res)=>{
                 
             if(quantity > 0 && trade){
                 console.log("placing order Now ..")
-                placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
-                    res.end(JSON.stringify({"success": res}, null, 3));
-                }).catch(function(err){
-                    res.end(JSON.stringify({"error": err}, null, 3));
+                //Before placing the order make sure the current LTP is > (greater than) the one raised 
+                // in Notification 
+                //get the LTP of the exchange - 
+                if (!kc) return res.send(JSON.stringify({ "error": "kite not flying" }));
+                var NFOTrade = transaction_type == "BANKNIFTY_BUY" ? "NFO:BANKNIFTY23MAYFUT" : "NFO:NIFTY23MAYFUT"
+                kc.getQuote(NFOTrade).then((response) => {
+                    let data = response;
+                    var bankNifty = "NFO:BANKNIFTY23MAYFUT"
+                    var nifty = "NFO:NIFTY23MAYFUT"
+                    var gate = false; 
+
+                    console.log("Notification Price ..", NFOLTP);
+
+                    if(transaction_type == "BANKNIFTY_BUY"){
+                        console.log("Current Price ", response[bankNifty].last_price ) 
+                        if(response[bankNifty].last_price > NFOLTP ){ // this means current price is greater and there is up trend safe to buy
+        
+                            gate = true;
+                        }
+                    }
+                    if(transaction_type == "BANKNIFTY_SELL"){
+                        console.log("Current Price ", response[bankNifty].last_price ) 
+                        if(response[bankNifty].last_price < NFOLTP ){ // this means current price is lesser and there is down trend safe to buy
+                            
+                            gate = true;
+                        }
+                    }
+                    if(transaction_type == "NIFTY_BUY"){
+                        console.log("Current Price ", response[nifty].last_price ) 
+                        if(response[nifty].last_price > NFOLTP ){ // this means current price is greater and there is up trend safe to buy
+                            gate = true;
+                        }
+                    }
+                    
+                    if(transaction_type == "NIFTY_SELL"){
+                        console.log("Current Price ", response[nifty].last_price ) 
+                        if(response[nifty].last_price < NFOLTP ){ // this means current price is greater and there is up trend safe to buy
+                            gate = true;
+                        }
+                    }
+
+                 if(gate){
+                    console.log("Conditions met ..placing order")
+                    placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
+                        res.end(JSON.stringify({"success": res}, null, 3));
+                    }).catch(function(err){
+                        res.end(JSON.stringify({"error": err}, null, 3));
+                    })
+                 }
+                 else{
+                    console.log(" Not setting order the conditions have not met.. ")
+                 }
+                    
+
+                    
+                }).catch(function (err) {
+                    console.log("There is rror", err)
+                    res.end(JSON.stringify({ "error": "bad request" })); 
                 })
+                
             }
 
             }
