@@ -576,11 +576,13 @@ app.post('/receiveAlerts',(req,res)=>{
                 // in Notification 
                 //get the LTP of the exchange - 
                 if (!kc) return res.send(JSON.stringify({ "error": "kite not flying" }));
-                var NFOTrade = transaction_type == "BANKNIFTY_BUY" ? "NFO:BANKNIFTY23MAYFUT" : "NFO:NIFTY23MAYFUT"
+                //var NFOTrade = transaction_type == "BANKNIFTY_BUY" ? "NFO:BANKNIFTY23MAYFUT" : "NFO:NIFTY23MAYFUT"
+                var NFOTrade = transaction_type == "BANKNIFTY_BUY" ? "NSE:NIFTY BANK" : "NSE:NIFTY 50"
                 kc.getQuote(NFOTrade).then((response) => {
+                    console.log(response)
                     let data = response;
-                    var bankNifty = "NFO:BANKNIFTY23MAYFUT"
-                    var nifty = "NFO:NIFTY23MAYFUT"
+                    var bankNifty = "NSE:NIFTY BANK"
+                    var nifty = "NSE:NIFTY 50"
                     var gate = false; 
 
                     console.log("Notification Price ..", NFOLTP);
@@ -615,11 +617,11 @@ app.post('/receiveAlerts',(req,res)=>{
 
                  if(gate){
                     console.log("Conditions met ..placing order")
-                    placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
+                   /* placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
                         res.end(JSON.stringify({"success": res}, null, 3));
                     }).catch(function(err){
                         res.end(JSON.stringify({"error": err}, null, 3));
-                    })
+                    })*/
                  }
                  else{
                     console.log(" Not setting order the conditions have not met.. ")
