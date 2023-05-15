@@ -577,7 +577,7 @@ app.post('/receiveAlerts',(req,res)=>{
                 //get the LTP of the exchange - 
                 if (!kc) return res.send(JSON.stringify({ "error": "kite not flying" }));
                 //var NFOTrade = transaction_type == "BANKNIFTY_BUY" ? "NFO:BANKNIFTY23MAYFUT" : "NFO:NIFTY23MAYFUT"
-                var NFOTrade = transaction_type == "BANKNIFTY_BUY" ? "NSE:NIFTY BANK" : "NSE:NIFTY 50"
+                var NFOTrade = transaction_type.substring(0,9) == "BANKNIFTY" ? "NSE:NIFTY BANK" : "NSE:NIFTY 50"
                 kc.getQuote(NFOTrade).then((response) => {
                     console.log(response)
                     let data = response;
