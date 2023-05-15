@@ -617,11 +617,11 @@ app.post('/receiveAlerts',(req,res)=>{
 
                  if(gate){
                     console.log("Conditions met ..placing order")
-                   /* placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
+                    placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
                         res.end(JSON.stringify({"success": res}, null, 3));
                     }).catch(function(err){
                         res.end(JSON.stringify({"error": err}, null, 3));
-                    })*/
+                    })
                  }
                  else{
                     console.log(" Not setting order the conditions have not met.. ")
