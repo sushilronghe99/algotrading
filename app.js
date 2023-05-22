@@ -589,12 +589,14 @@ app.post('/receiveAlerts',(req,res)=>{
 
                     if(transaction_type == "BANKNIFTY_BUY"){
                         console.log("Current Price ", response[bankNifty].last_price ) 
+                        gate = true;
                         if(response[bankNifty].last_price > NFOLTP ){ // this means current price is greater and there is up trend safe to buy
         
                             gate = true;
                         }
                     }
                     if(transaction_type == "BANKNIFTY_SELL"){
+                        gate = true;
                         console.log("Current Price ", response[bankNifty].last_price ) 
                         if(response[bankNifty].last_price < NFOLTP ){ // this means current price is lesser and there is down trend safe to buy
                             
