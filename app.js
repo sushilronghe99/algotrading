@@ -127,6 +127,35 @@ app.get('/errors', (req, res) => {
         })
     })
 })
+app.post('/action_Buy_CELL',function(req,res){
+    var obj = req.body;
+
+    console.log(req.body)
+    
+    var trade = obj.strike + obj.BUY_SELL;
+    var exchange = "NFO"
+    var product = obj.product_type == "on" ? "MIS" : "NRML"
+    var quantity = obj.QTY;
+    //var transaction_type = obj.BUY_SELL
+    var sl = obj.stoploss;
+    var limit = obj.limit;
+    
+    console.log("TradingSymbol", trade)
+    console.log("exchange", exchange)
+    console.log("product", product)
+    console.log("QTY", quantity)
+    console.log("SL", sl)
+    console.log("Limit", limit)
+
+    placeAlgoOrder(trade,exchange,product, quantity,sl,limit).then(function(res){
+        res.end(JSON.stringify({"success": res}, null, 3));
+    }).catch(function(err){
+        res.end(JSON.stringify({"error": err}, null, 3));
+    })
+
+
+    res.send(obj);
+});
 
 app.get('/triggers', (req, res) => {
 

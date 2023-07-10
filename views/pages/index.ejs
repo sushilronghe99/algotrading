@@ -1,67 +1,240 @@
 <%- include('../partials/head') %>
-<%- include('../partials/header') %>
+    <%- include('../partials/header') %>
 
+        <% var rows=[43000,43200,43500,43800,44000,44500,44600,44700,44800,44900,45000,45100,45200,45300,45400,45500,45600,45800,46000,46200,46300,46500,46700]%>
+            <% var rowsLength=rows.length %>
 
-<div class="container">
-    <% if(user.request_token && kc){ %>
-       
-        <div class="jumbotron">
-          <h1 class="display-4">Welcome, Sushil!</h1>
-          <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
-          <hr class="my-4">
-          
-          <% data.forEach((article)=> { %>
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="card mb-3 card-body">
-                        <div class="row align-items-center">
-                          
-                            <div class="col">
-                                <div class="card border-0 bg-light rounded shadow">
-                                    <div class="card-body p-4">
-                                        <% if(article.tradingsymbol && article.tradingsymbol.slice(-2) == "CE"){ %>
-                                          <span class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">CALL</span>
-                                          <% } else{ %>  
-                                            <span class="badge rounded-pill bg-warning float-md-end mb-3 mb-sm-0">PUT</span>
-                                            <% } %>
-                                        <h5> <%= article.tradingsymbol %></h5>
-                                        <div class="mt-3">
-                                            <span class="text-muted d-block"><i class="fa fa-home" aria-hidden="true"></i> <a href="#" target="_blank" class="text-muted">LTP (Price):  <%= article.average_price %></a></span>
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Order Type:  <%= article.product %></span>
-                                           
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Buy QTY:  <%= article.quantity %></span>
-                                            <span class="text-muted d-block"><i class="fa fa-map-marker" aria-hidden="true"></i> Trigger Date: <%= new Date(article.exchange_timestamp).toLocaleDateString("de-DE"); %></span>
-                                        </div>
-                                        
-                                        <div class="mt-3">
-                                            <a href="#" class="btn btn-primary"><%= new Date(article.exchange_timestamp).getHours()%>:<%=  new Date(article.exchange_timestamp).getMinutes()  %></a>
+            <% var niftyrows=[18000,18100,18200,18300,18400,18500,18600,18700,18800,18900,19000,19100,19200,19300,19400,19500,19600,19700,19800,19900,20000,20100,20200,20300]%>
+            <% var niftyLength=niftyrows.length %>
+
+                <div class="container">
+                    <% if(user.request_token && kc){ %>
+
+                        <div class="jumbotron">
+                            <h1 class="display-4">Welcome, Sushil!</h1>
+                            <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling
+                                extra attention to featured content or information.</p>
+                            <hr class="my-4">
+
+                            <% data.forEach((article)=> { %>
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div class="card mb-3 card-body">
+                                            <div class="row align-items-center">
+
+                                                <div class="col">
+                                                    <div class="card border-0 bg-light rounded shadow">
+                                                        <div class="card-body p-4">
+                                                            <% if(article.tradingsymbol &&
+                                                                article.tradingsymbol.slice(-2)=="CE" ){ %>
+                                                                <span
+                                                                    class="badge rounded-pill bg-primary float-md-end mb-3 mb-sm-0">CALL</span>
+                                                                <% } else{ %>
+                                                                    <span
+                                                                        class="badge rounded-pill bg-warning float-md-end mb-3 mb-sm-0">PUT</span>
+                                                                    <% } %>
+                                                                        <h5>
+                                                                            <%= article.tradingsymbol %>
+                                                                        </h5>
+                                                                        <div class="mt-3">
+                                                                            <span class="text-muted d-block"><i
+                                                                                    class="fa fa-home"
+                                                                                    aria-hidden="true"></i> <a href="#"
+                                                                                    target="_blank"
+                                                                                    class="text-muted">LTP (Price): <%=
+                                                                                        article.average_price %>
+                                                                                        </a></span>
+                                                                            <span class="text-muted d-block"><i
+                                                                                    class="fa fa-map-marker"
+                                                                                    aria-hidden="true"></i> Order Type:
+                                                                                <%= article.product %></span>
+
+                                                                            <span class="text-muted d-block"><i
+                                                                                    class="fa fa-map-marker"
+                                                                                    aria-hidden="true"></i> Buy QTY: <%=
+                                                                                    article.quantity %></span>
+                                                                            <span class="text-muted d-block"><i
+                                                                                    class="fa fa-map-marker"
+                                                                                    aria-hidden="true"></i> Trigger
+                                                                                Date: <%= new
+                                                                                    Date(article.exchange_timestamp).toLocaleDateString("de-DE");
+                                                                                    %></span>
+                                                                        </div>
+
+                                                                        <div class="mt-3">
+                                                                            <a href="#" class="btn btn-primary">
+                                                                                <%= new
+                                                                                    Date(article.exchange_timestamp).getHours()%>
+                                                                                    :<%= new
+                                                                                        Date(article.exchange_timestamp).getMinutes()
+                                                                                        %>
+                                                                            </a>
+                                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                                <% }) %>
                         </div>
-                    </div>
+
+
+                        <% } else{ %>
+                            <a href="https://kite.trade/connect/login?api_key=353th5rd1v3iislo&v=4"> Login </a>
+                            <% } %>
+
+
+                                <div class="container-fluid">
+
+                                    <p><code>BANK NIFTY</code>:</p>
+
+                                    <form class="row row-cols-lg-auto g-3 align-items-center" action="/action_Buy_CELL"
+                                        method="post">
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">QTY</div>
+                                                <input type="text" name="QTY" class="form-control"
+                                                    id="inlineFormInputGroupUsername" value="90" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">PE/CE</div>
+                                                <input type="text" name="BUY_SELL" class="form-control"
+                                                    id="niftype_stoploss" value="CE" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <select class="form-control" name="strike" id="sel1">
+                                                        <option selected="true" disabled="disabled">Please Select Strike
+                                                            Price</option>
+                                                        <% for(var i=0;i<rowsLength;i++){ %>
+                                                            <option class="form-control" value="BANKNIFTY23JUL<%=rows[i] %>">
+                                                                <%= rows[i] %>
+                                                            </option>
+                                                            <% } %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">Stop Loss</div>
+                                                <input type="text" name="stoploss" class="form-control"
+                                                    id="niftype_stoploss" value="30" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">Limit</div>
+                                                <input type="text" name="limit" class="form-control" id="niftype_limit"
+                                                    value="50" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                              <input class="form-check-input" name="product_type" type="checkbox" id="inlineFormCheck" />
+                                              <label class="form-check-label" for="inlineFormCheck">
+                                               MIS Order
+                                              </label>
+                                            </div>
+                                          </div>
+
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+
+                                <div class="container-fluid">
+
+                                    <p><code>NIFTY 50</code>:</p>
+
+                                    <form class="row row-cols-lg-auto g-3 align-items-center" action="/action_Buy_CELL"
+                                        method="post">
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">QTY</div>
+                                                <input type="text" name="QTY" class="form-control"
+                                                    id="inlineFormInputGroupUsername" value="90" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">PE/CE</div>
+                                                <input type="text" name="BUY_SELL" class="form-control"
+                                                    id="niftype_stoploss" value="CE" />
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <label class="visually-hidden" for="inlineFormSelectPref">Preference</label>
+                                            <div class="form-group">
+                                                <div class="input-group">
+                                                    <select class="form-control" name="strike" id="sel1">
+                                                        <option selected="true" disabled="disabled">Please Select Strike
+                                                            Price</option>
+                                                        <% for(var i=0;i<niftyLength;i++){ %>
+                                                            <option class="form-control" value="NIFTY23JUL<%=niftyrows[i] %>">
+                                                                <%= niftyrows[i] %>
+                                                            </option>
+                                                            <% } %>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">Stop Loss</div>
+                                                <input type="text" name="stoploss" class="form-control"
+                                                    id="niftype_stoploss" value="30" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="input-group">
+                                                <div class="input-group-text">Limit</div>
+                                                <input type="text" name="limit" class="form-control" id="niftype_limit"
+                                                    value="50" />
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                              <input class="form-check-input" name="product_type" type="checkbox" id="inlineFormCheck" />
+                                              <label class="form-check-label" for="inlineFormCheck">
+                                               MIS Order
+                                              </label>
+                                            </div>
+                                          </div>
+
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                
+
+
                 </div>
-            </div>
-            <% }) %>
-        </div>
-       
-       
-      <% } else{ %>  
-        <a href = "https://kite.trade/connect/login?api_key=353th5rd1v3iislo&v=4"> Login </a>
-     <% } %>
 
-   
-    
-</div>
+                <%- include('../partials/footer') %>
 
-<%- include('../partials/footer') %>
-
-<script>
-    function func1(){
-      console.log("I am in the click handler 1!"); 
-    }
-    function func2(){
-      console.log("I am in the click handler 2!"); 
-    }
-  </script>
+                    <script>
+                        function func1() {
+                            console.log("I am in the click handler 1!");
+                        }
+                        function func2() {
+                            console.log("I am in the click handler 2!");
+                        }
+                    </script>
