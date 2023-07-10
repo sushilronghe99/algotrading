@@ -493,28 +493,34 @@ function createGTT(tradingSym, exchange, product, last_price, qty,sl,limit){
         console.log("exchange" + exchange);
         console.log("product" + product);
         console.log("last_price" + last_price);
+
+        last_price = Math.round(last_price);
+
+        console.log("Trigger Values" + last_price-sl +","+ last_price+limit);
+
         console.log("QTY" + qty);
         console.log("Limit & SL ", limit +" "+sl);
 
-
+        last_price = Math.round(last_price);
+        
     kc.placeGTT({
         trigger_type: kc.GTT_TYPE_OCO,
         tradingsymbol: tradingSym,
         exchange: exchange, //NSE NFO
-        trigger_values: [Math.round(last_price-sl), Math.round(last_price+limit)],
+        trigger_values: [last_price-sl, last_price+limit],
         last_price: last_price,
         orders: [{
             transaction_type: kc.TRANSACTION_TYPE_SELL,
             quantity: qty,
             product: product,//kc.PRODUCT_MIS,
             order_type: kc.ORDER_TYPE_LIMIT,
-            price: Math.round(last_price-sl)
+            price: last_price-sl
         }, {
             transaction_type: kc.TRANSACTION_TYPE_SELL,
             quantity: qty,
             product: product,//kc.PRODUCT_MIS,
             order_type: kc.ORDER_TYPE_LIMIT,
-            price: Math.round(last_price+limit)
+            price: last_price+limit
         }]
     }).then(function (resp) {
         resolve(resp);
