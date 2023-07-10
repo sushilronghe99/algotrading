@@ -495,8 +495,13 @@ function createGTT(tradingSym, exchange, product, last_price, qty,sl,limit){
         console.log("last_price" + last_price);
 
         last_price = Math.round(last_price);
+        sl = Number(sl)
+        limit = Number(limit)
 
-        console.log("Trigger Values" + last_price-sl +","+ last_price+limit);
+        var t1 = last_price-sl
+        var t2 =last_price+limit
+
+        console.log("Trigger Values" + t1 +","+t2 );
 
         console.log("QTY" + qty);
         console.log("Limit & SL ", limit +" "+sl);
